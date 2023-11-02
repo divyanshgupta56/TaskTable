@@ -17,8 +17,11 @@ import { IoLinkSharp } from "react-icons/io5";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { create } from "@mui/material/styles/createTransitions";
 import gem from "../assets/images/gem.svg";
+import Modal from "@mui/material/Modal";
+
 import {
   Avatar,
+  Button,
   FormControl,
   InputLabel,
   MenuItem,
@@ -34,11 +37,24 @@ import {
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useSelector } from "react-redux";
 // import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 // import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 // import { LocalizationProvider } from "@mui/x-date-pickers";
 
 // import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+  display: "grid",
+};
 function createData(
   srNo,
   task,
@@ -76,6 +92,7 @@ function createData(
     isEditable,
   };
 }
+
 function TaskCol(row) {
   if (row.isEditable) {
     return (
@@ -705,7 +722,10 @@ function OwnerCol({ row }) {
 function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
-
+  const currentState = useSelector((state) => {
+    return state.table;
+  });
+  console.log(currentState);
   return (
     <React.Fragment>
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
@@ -812,6 +832,10 @@ const rows = [
 ];
 
 function CollapsibleTable() {
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table">
@@ -833,7 +857,30 @@ function CollapsibleTable() {
             <TableCell align="center">Status</TableCell>
             <TableCell align="center">Files</TableCell>
             <TableCell align="center">Links</TableCell>
-            <TableCell align="center">Submission approval</TableCell>
+            <TableCell align="center" sx={{ minWidth: "150px" }}>
+              Submission approval
+            </TableCell>
+            <TableCell
+              align="center"
+              onClick={handleOpen}
+              sx={{ minWidth: "100px" }}
+            >
+              + Add Column
+            </TableCell>
+            <Modal
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={style}>
+                <TextField
+                  label="Enter new field"
+                  variant="outlined"
+                ></TextField>
+                <Button onClick={handleClose}>Submit</Button>
+              </Box>
+            </Modal>
           </TableRow>
         </TableHead>
         <TableBody>
